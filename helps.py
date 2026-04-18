@@ -1,4 +1,4 @@
-from faker import Faker
+from faker import Faker 
 import requests
 
 from data.endpoints import Endpoints
@@ -22,7 +22,7 @@ class DataCreateCourier:
     # функция генерации фэйковых валидных данных
     @staticmethod
     def generating_fake_valid_data_to_create_courier():
-        fake = Faker("ru_RU")
+        fake = faker.Faker("ru_RU")
         login = fake.user_name()
         password = fake.password()
         firstname = fake.first_name()
@@ -37,7 +37,7 @@ class DataCreateCourier:
     # функция генерации фэйковых данных без поля "Login"
     @staticmethod
     def generating_fake_invalid_data_to_create_courier_without_login_field():
-        fake = Faker("ru_RU")
+        fake = faker.Faker("ru_RU")
         firstname = fake.first_name()
         password = fake.password()
         data = {
@@ -51,7 +51,7 @@ class DataCreateCourier:
     # функция генерации фэйковых данных без поля "Password"
     @staticmethod
     def generating_fake_invalid_data_to_create_courier_without_password_field():
-        fake = Faker("ru_RU")
+        fake = faker.Faker("ru_RU")
         login = fake.user_name()
         firstname = fake.first_name()
         data = {
