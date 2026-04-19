@@ -6,6 +6,6 @@ class Endpoints:
     get_number_courier_orders = "/api/v1/courier/:id/ordersCount"
     finish_order = "/api/v1/orders/finish/"
     cansel_order = "/api/v1/orders/cancel"
-    get_order_list = "/api/v1/orders"
+    get_orders_list = "/api/v1/orders"
     accept_order_by_number = "/api/v1/orders/track"
     accept_order = "/api/v1/orders/accept/:id"
