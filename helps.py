@@ -80,6 +80,12 @@ class DataCourier:
         "password": "test"
     }
 
+    # данные несуществующего курьера с невалидными значениями
+    incorrect_data_login = {
+        "login": 12345,
+        "password": True
+    }
+
 
 class Courier:
 
