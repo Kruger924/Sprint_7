@@ -14,7 +14,7 @@ class TestDeleteCourier:
 
 
     @allure.title('Проверка удаления курьера с несуществующим ID')
-    @allure.description('Отправка запросв на удаление курьера с несуществующим ID и проверка ответа')
+    @allure.description('Отправка запроса на удаление курьера с несуществующим ID и проверка ответа')
     def test_delete_courier_invalid_id_failed(self):
         courier_id = '123456'
         response = Courier().courier_subsequent_deletion(courier_id)

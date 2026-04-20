@@ -1,5 +1,6 @@
 from faker import Faker 
 import requests
+import allure
 
 from data.endpoints import Endpoints
 from data.urls import Urls
@@ -84,6 +85,7 @@ class Courier:
 
     # функция регистрации в системе с возвратом ответа и данных курьера
     @staticmethod
+    @allure.step('Регистрация курьера в системе')
     def courier_registration_in_the_system_and_get_courier_data():
         data = DataCreateCourier.generating_fake_valid_data_to_create_courier()
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.create_courier}', data=data)
@@ -91,12 +93,14 @@ class Courier:
 
     # функция логина в системе с возвратом ответа и id курьера
     @staticmethod
+    @allure.step('Логин курьера в системе')
     def courier_login_in_the_system_and_get_id_courier(data):
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.login_courier}', data=data)
         return {"id": str(response.json()["id"]), "response_text": response.text, "status_code": response.status_code}
 
     # функция удаления курьера
     @staticmethod
+    @allure.step('Удаление курьера из системы')
     def courier_subsequent_deletion(id):
         response = requests.delete(f'{Urls.QA_SCOOTER_URL}{Endpoints.delete_courier}{id}')
         return {"response_text": response.text, "status_code": response.status_code}

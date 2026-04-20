@@ -12,6 +12,7 @@ class TestOrderCreate:
     @allure.title('Проверка оформления заказа с различными цветами самоката')
     @allure.description('Отправка запроса на создание заказа с поочередным добавлением различных цветов и проверка ответа')
     @pytest.mark.parametrize('color', [{"color": ["BLACK"]}, {"color": ["GREY"]}, {"color": ["BLACK", "GREY"]}, {"color": [""]}])
+    @allure.step('Создание заказа с цветом {color}')
     def test_create_order_success(self, color):
         headers = {"Content-type": "application/json"}
         data = DataOrder.data
