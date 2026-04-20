@@ -24,18 +24,18 @@ class TestLoginCourier:
     def test_courier_login_without_parameters_failed(self, courier_data):
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.login_courier}', data=courier_data)
         assert response.status_code == 400
-        assert "Недостаточно данных для входа" in response.text
+        assert response.json().get("message") == "Недостаточно данных для входа"
 
     @allure.title('Проверка ошибки при авторизации курьера с несуществующими данными')
     @allure.description('Отправка запроса на авторизацию с несуществующими данными и проверка ответа')
     def test_courier_login_without_null_login_failed(self):
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.login_courier}', data=DataCourier.null_data_login)
         assert response.status_code == 404
-        assert "Учетная запись не найдена" in response.text
+        assert response.json().get("message") == "Учетная запись не найдена"
 
     @allure.title('Проверка ошибки при авторизации курьера с несуществующими невалидными данными')
     @allure.description('Отправка запроса на авторизацию с несуществующими невалидными данными и проверка ответа')
     def test_courier_login_without_incorrect_login_failed(self):
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.login_courier}', data=DataCourier.incorrect_data_login)
         assert response.status_code == 404
-        assert "Учетная запись не найдена" in response.text
+        assert response.json().get("message") == "Учетная запись не найдена"

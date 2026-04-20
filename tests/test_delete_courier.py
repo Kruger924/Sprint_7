@@ -10,7 +10,7 @@ class TestDeleteCourier:
         courier_id = courier_delete
         response = Courier().courier_subsequent_deletion(courier_id["id"])
         assert response["status_code"] == 200
-        assert response["response_text"] == '{"ok":true}'
+        assert response["response"].get("ok") is True
 
 
     @allure.title('Проверка удаления курьера с несуществующим ID')
@@ -19,7 +19,7 @@ class TestDeleteCourier:
         courier_id = '123456'
         response = Courier().courier_subsequent_deletion(courier_id)
         assert response["status_code"] == 404
-        assert "Курьера с таким id нет" in response["response_text"] 
+        assert response["response"].get("message") == "Курьера с таким id нет"
 
     @allure.title('Проверка удаления курьера без ID')
     @allure.description('Отправка запроса на удаление курьера без ID и проверка ответа')
@@ -27,4 +27,4 @@ class TestDeleteCourier:
         courier_id = None
         response = Courier().courier_subsequent_deletion(courier_id)
         assert response["status_code"] == 500
-        assert "invalid input syntax" in response["response_text"] 
+        assert "invalid input syntax" in response["response"].get("message", "")
