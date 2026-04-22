@@ -2,6 +2,7 @@ import allure
 import pytest
 import requests
 from helps import DataCourier
+from checks.courier_checks import check_courier_created, check_courier_duplicate, check_courier_validation_error
 from data.endpoints import Endpoints
 from data.urls import Urls
 
@@ -13,7 +14,7 @@ class TestCreateCourier:
     def test_registration_courier_success(self, courier):
         courier_data = courier
         assert courier_data["status_code"] == 201
-        assert courier_data["response"].get("ok") is True
+        check_courier_created(courier_data["response"])
 
     @allure.title('Проверка ошибки при дублировании курьера при создании')
     @allure.description('Отправка повторного запроса на создание курьера, проверка ответа и удаление курьера')
@@ -21,7 +22,7 @@ class TestCreateCourier:
     def test_registration_double_courier_failed(self, courier):
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.create_courier}', data=courier["data"])
         assert response.status_code == 409
-        assert response.json().get("message") == "Этот логин уже используется"
+        check_courier_duplicate(response.json())
 
     @allure.title('Проверка ошибки при создании курьера без заполнения обязательных полей Login Password')
     @allure.description('Отправка запроса на создание курьера без заполнения обязательных полей Login Password и проверка ответа')
@@ -31,4 +32,4 @@ class TestCreateCourier:
     def test_courier_registration_without_parameters_failed(self, courier_data):
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.create_courier}', data=courier_data)
         assert response.status_code == 400
-        assert response.json().get("message") == "Недостаточно данных для создания учетной записи"
+        check_courier_validation_error(response.json())

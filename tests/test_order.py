@@ -3,6 +3,7 @@ import allure
 import pytest
 import requests
 from helps import DataOrder
+from checks.order_checks import check_order_created
 from data.endpoints import Endpoints
 from data.urls import Urls
 
@@ -20,4 +21,4 @@ class TestOrderCreate:
         data = json.dumps(data)
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.create_order}', headers=headers, data=data)
         assert response.status_code == 201
-        assert "track" in response.text
+        check_order_created(response.json())

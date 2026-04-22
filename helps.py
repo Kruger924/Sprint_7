@@ -4,87 +4,60 @@ import allure
 
 from data.endpoints import Endpoints
 from data.urls import Urls
+from data.test_data import (
+    ORDER_DATA,
+    INVALID_DATA_LOGIN_WITHOUT_LOGIN,
+    INVALID_DATA_LOGIN_WITHOUT_PASSWORD,
+    NULL_DATA_LOGIN,
+    INCORRECT_DATA_LOGIN,
+)
 
 
 class DataOrder:
-    # данные для заказа самоката без цвета
-    data = {
-        "firstName": "Сергей",
-        "lastName": "Куликов",
-        "address": "г.Москва",
-        "metroStation": 4,
-        "phone": "+7 999 888 7654",
-        "rentTime": 4,
-        "deliveryDate": "2026-04-20",
-        "comment": "Хочу быстрее кататься!",
-    }
-
-class DataCreateCourier:
-    # функция генерации фэйковых валидных данных
-    @staticmethod
-    def generating_fake_valid_data_to_create_courier():
-        fake = Faker("ru_RU")
-        login = fake.user_name()
-        password = fake.password()
-        firstname = fake.first_name()
-        data = {
-            "login": login,
-            "firstName": firstname,
-            "password": password
-        }
-
-        return data
-
-    # функция генерации фэйковых данных без поля "Login"
-    @staticmethod
-    def generating_fake_invalid_data_to_create_courier_without_login_field():
-        fake = Faker("ru_RU")
-        firstname = fake.first_name()
-        password = fake.password()
-        data = {
-            "login": "",
-            "firstName": firstname,
-            "password": password
-        }
-
-        return data
-
-    # функция генерации фэйковых данных без поля "Password"
-    @staticmethod
-    def generating_fake_invalid_data_to_create_courier_without_password_field():
-        fake = Faker("ru_RU")
-        login = fake.user_name()
-        firstname = fake.first_name()
-        data = {
-            "login": login,
-            "password": "",
-            "firstName": firstname
-        }
-
-        return data
+    """Класс для доступа к данным заказа."""
+    data = ORDER_DATA
 
 
 class DataCourier:
-    # валидные данные для регистрации
-    valid_data_login = DataCreateCourier.generating_fake_valid_data_to_create_courier()
+    """Класс для доступа к данным курьера."""
+    invalid_data_login_without_login = INVALID_DATA_LOGIN_WITHOUT_LOGIN
+    invalid_data_login_without_password = INVALID_DATA_LOGIN_WITHOUT_PASSWORD
+    null_data_login = NULL_DATA_LOGIN
+    incorrect_data_login = INCORRECT_DATA_LOGIN
 
-    # невалидные данные для регистрации без поля "Login"
-    invalid_data_login_without_login = DataCreateCourier.generating_fake_invalid_data_to_create_courier_without_login_field()
 
-    # невалидные данные для регистрации без поля "Password"
-    invalid_data_login_without_password = DataCreateCourier.generating_fake_invalid_data_to_create_courier_without_password_field()
+class CourierDataGenerator:
+    """Генерация фейковых данных для тестов курьеров."""
 
-    # данные несуществующего курьера
-    null_data_login = {
-        "login": "test",
-        "password": "test"
-    }
+    @staticmethod
+    def generate_valid_courier_data() -> dict:
+        """Генерация валидных данных для создания курьера."""
+        fake = Faker("ru_RU")
+        return {
+            "login": fake.user_name(),
+            "firstName": fake.first_name(),
+            "password": fake.password()
+        }
 
-    # данные несуществующего курьера с невалидными значениями
-    incorrect_data_login = {
-        "login": 12345,
-        "password": True
-    }
+    @staticmethod
+    def generate_invalid_courier_data_without_login() -> dict:
+        """Генерация невалидных данных без логина."""
+        fake = Faker("ru_RU")
+        return {
+            "login": "",
+            "firstName": fake.first_name(),
+            "password": fake.password()
+        }
+
+    @staticmethod
+    def generate_invalid_courier_data_without_password() -> dict:
+        """Генерация невалидных данных без пароля."""
+        fake = Faker("ru_RU")
+        return {
+            "login": fake.user_name(),
+            "password": "",
+            "firstName": fake.first_name()
+        }
 
 
 class Courier:
@@ -93,7 +66,7 @@ class Courier:
     @staticmethod
     @allure.step('Регистрация курьера в системе')
     def courier_registration_in_the_system_and_get_courier_data():
-        data = DataCreateCourier.generating_fake_valid_data_to_create_courier()
+        data = CourierDataGenerator.generate_valid_courier_data()
         response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.create_courier}', data=data)
         return {"response": response.json(), "status_code": response.status_code, "data": data}
 

@@ -1,5 +1,6 @@
 import allure
 from helps import Courier
+from checks.delete_checks import check_courier_deleted, check_delete_not_found, check_delete_error_id
 
 
 class TestDeleteCourier:
@@ -10,7 +11,7 @@ class TestDeleteCourier:
         courier_id = courier_delete
         response = Courier().courier_subsequent_deletion(courier_id["id"])
         assert response["status_code"] == 200
-        assert response["response"].get("ok") is True
+        check_courier_deleted(response["response"])
 
 
     @allure.title('Проверка удаления курьера с несуществующим ID')
@@ -19,12 +20,12 @@ class TestDeleteCourier:
         courier_id = '123456'
         response = Courier().courier_subsequent_deletion(courier_id)
         assert response["status_code"] == 404
-        assert response["response"].get("message") == "Курьера с таким id нет"
+        check_delete_not_found(response["response"])
 
     @allure.title('Проверка удаления курьера без ID')
     @allure.description('Отправка запроса на удаление курьера без ID и проверка ответа')
     def test_delete_courier_none_id_failed(self):
-        courier_id = None
+        courier_id = ''
         response = Courier().courier_subsequent_deletion(courier_id)
-        assert response["status_code"] == 500
-        assert "invalid input syntax" in response["response"].get("message", "")
+        assert response["status_code"] == 400
+        check_delete_error_id(response["response"])
