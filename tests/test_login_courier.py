@@ -1,0 +1,42 @@
+import allure
+import pytest
+import requests
+from helps import DataCourier, Courier
+from checks.login_checks import check_courier_logged_in, check_login_validation_error, check_login_not_found
+from data.endpoints import Endpoints
+from data.urls import Urls
+
+
+class TestLoginCourier:
+
+    @allure.title('Проверка авторизации курьера с валидными данными')
+    @allure.description('Отправка запроса авторизации, проверка ответа и удаление курьера')
+    def test_courier_login_success(self, courier):
+        courier_data = courier
+        response = Courier().courier_login_in_the_system_and_get_id_courier(courier_data["data"])
+        assert response["status_code"] == 200
+        check_courier_logged_in(response["response"])
+
+    @allure.title('Проверка ошибки при авторизации курьера без заполнения обязательных полей Login Password')
+    @allure.description('''Отправка запроса на авторизацию без заполнения обязательных полей Login Password
+                         и проверка ответа''')
+    @pytest.mark.parametrize('courier_data', [DataCourier.invalid_data_login_without_login,
+                                           DataCourier.invalid_data_login_without_password])
+    def test_courier_login_without_parameters_failed(self, courier_data):
+        response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.login_courier}', data=courier_data)
+        assert response.status_code == 400
+        check_login_validation_error(response.json())
+
+    @allure.title('Проверка ошибки при авторизации курьера с несуществующими данными')
+    @allure.description('Отправка запроса на авторизацию с несуществующими данными и проверка ответа')
+    def test_courier_login_without_null_login_failed(self):
+        response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.login_courier}', data=DataCourier.null_data_login)
+        assert response.status_code == 404
+        check_login_not_found(response.json())
+
+    @allure.title('Проверка ошибки при авторизации курьера с несуществующими невалидными данными')
+    @allure.description('Отправка запроса на авторизацию с несуществующими невалидными данными и проверка ответа')
+    def test_courier_login_without_incorrect_login_failed(self):
+        response = requests.post(f'{Urls.QA_SCOOTER_URL}{Endpoints.login_courier}', data=DataCourier.incorrect_data_login)
+        assert response.status_code == 404
+        check_login_not_found(response.json())
